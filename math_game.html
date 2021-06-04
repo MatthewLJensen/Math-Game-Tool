@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+Created by Matthew Jensen on October 29, 2020.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Math Facts Review</title>
+
+<style>
+#question { display: none; }
+* { font-size: xx-large; }
+#userAnswer
+{
+  width: 2em;
+}
+
+
+
+* {
+  box-sizing: border-box;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+.left, .right {
+  width: 25%;
+}
+
+.middle {
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+th {
+  width: 3%;
+  text-align: "center";
+}
+
+td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.counter {
+	
+	margin: auto;
+}
+
+</style>
+ </head>
+
+ <body translate="no">
+ 
+<script id="rendered-js">
+	function randrange(start, stop)
+	{
+	  return Math.floor(Math.random() * (stop - start));
+	}
+
+	let rightAnswer;
+	let num1;
+	let num2;
+	let numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+
+
+	function reset(){
+		var con = confirm("Are you sure you want to clear the history?");
+		if (con) {
+			document.querySelector("#history").innerHTML = "";
+		}
+	}
+	
+	function start(){
+		var start_button = document.querySelector("#start");
+		if (start_button.innerHTML == "Start"){
+			start_button.innerHTML = "Reset";
+		}else if (start_button.innerHTML == "Reset"){
+			reset();
+			document.querySelector("#userAnswer").value = " ";
+		}
+		createQuestion();
+	}
+	
+
+	function createQuestion()
+	{
+	  num1 = randrange(0, 10);
+	  num2 = randrange(0, 10);
+	  let oper = "×+"[randrange(0, 2)];
+	  if (oper == '×')
+		rightAnswer = num1 * num2;
+	  else
+		rightAnswer = num1 + num2;
+	  document.querySelector("#num1").innerHTML = num1;
+	  document.querySelector("#num2").innerHTML = num2;
+	  document.querySelector("#oper").innerHTML = oper;
+	  document.querySelector("#question").style.display = "block";
+	  let userAnswer = document.querySelector("#userAnswer");
+	  userAnswer.value = "";
+	  userAnswer.focus();
+	}
+
+	function checkAnswer() {
+		let userAnswer = document.querySelector("#userAnswer").value;
+		let historyItem = document.querySelector("#template").cloneNode(true);
+		historyItem.id = "";
+		document.querySelector("#history").prepend(historyItem);
+		historyItem.innerHTML = document.querySelector("#question").innerText;
+		if (userAnswer == rightAnswer){
+			historyItem.style.color = 'green';
+			historyItem.innerHTML = historyItem.innerHTML + userAnswer + ' &#x2714;&#xFE0F';
+			addToStats(true);
+		} else {
+			historyItem.style.color = 'red';
+			historyItem.innerHTML = historyItem.innerHTML + userAnswer.strike() + "	&#x274C; (" + rightAnswer + ")";
+			addToStats(false);
+		}
+		createQuestion();
+	
+	function addToStats(correct) {
+		var total_correct = document.querySelector("#total_correct");
+		var total_asked = document.querySelector("#total_asked");
+		var percent_correct = document.querySelector("#percent_correct");
+		
+		totalCorrect = parseInt(total_correct.innerHTML);
+		totalAsked = parseInt(total_asked.innerHTML);
+		
+		totalAsked += 1;
+		
+		if (correct)
+			totalCorrect += 1;
+		else {
+			console.log(num1);
+			console.log(num2);
+			
+			console.log(numbers[num1]);
+			
+			if (num1 != num2)
+				document.querySelector("#" + numbers[num1]).innerHTML = parseInt(document.querySelector("#" + numbers[num1]).innerHTML) + 1;
+			document.querySelector("#" + numbers[num2]).innerHTML = parseInt(document.querySelector("#" + numbers[num2]).innerHTML) + 1;
+			
+		}
+		percentCorrect = Math.round(totalCorrect/totalAsked*100);
+		
+		total_correct.innerHTML = totalCorrect;
+		total_asked.innerHTML = totalAsked;
+		
+		percent_correct.innerHTML = String(percentCorrect) + "%";
+		
+		var statsDiv = document.querySelector("#stats");
+		
+		if (percentCorrect > 79){
+			statsDiv.style.color = "green";
+		} else if (percentCorrect > 64){
+			statsDiv.style.color = "yellow";
+		} else if (percentCorrect > 49){
+			statsDiv.style.color = "orange";
+		} else {
+			statsDiv.style.color = "red";
+		}
+		
+		
+	}
+}
+</script>
+
+
+
+<div class="row">
+  <div class="column left">
+  
+	  <button id="start" onclick="start()">Start</button>
+	  <br>
+
+	<div id="question">
+	  <span id="num1">3</span>
+	  <span id="oper">×</span>
+	  <span id="num2">6</span>
+	  =
+	  <input type="number" id="userAnswer" size="2" min="0" max="99" onchange="checkAnswer()"/>
+	</div>
+	
+	<div id="history">
+	  
+	</div>  
+
+	<div id="template"></div>
+
+</div>
+  
+  
+  <div class="column middle">
+  
+  
+  		<table class="counter">
+			<tr>
+				<th>0</th>
+				<th>1</th>
+				<th>2</th>
+				<th>3</th>
+				<th>4</th>
+				<th>5</th>
+				<th>6</th>
+				<th>7</th>
+				<th>8</th>
+				<th>9</th>
+			</tr>
+			<tr id="counters">
+				<td id="zero">0</td>
+				<td id="one">0</td>
+				<td id="two">0</td>
+				<td id="three">0</td>
+				<td id="four">0</td>
+				<td id="five">0</td>
+				<td id="six">0</td>
+				<td id="seven">0</td>
+				<td id="eight">0</td>
+				<td id="nine">0</td>
+			</tr>
+		</table>
+  
+  
+  </div>
+  
+  <div class="column right">
+  
+  		<div id="stats" align="right">
+			<span id="total_correct">0</span>/<span id="total_asked">0</span>
+			<span id="percent_correct">0%</span>
+		<div>
+  
+
+  </div>
+  
+	
+</div>
+
+ </body>
+
+</html>
